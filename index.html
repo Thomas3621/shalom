@@ -1503,6 +1503,59 @@ footer .wrap{position:relative;z-index:2}
   border-color:rgba(0,120,192,.38);
   box-shadow:0 1px 2px rgba(12,26,45,.08),0 0 14px -5px rgba(0,120,192,.5);
 }
+
+/* ===================================================================
+   iOS / SAFARI FITTING
+   The page declares viewport-fit=cover, which stops iOS insetting the
+   layout for the notch and the home indicator — so the insets have to
+   be honoured here instead.
+   =================================================================== */
+
+/* 1. The controls belong at the right end of the header. The desktop nav
+      carries margin-left:auto and does that job; once it is hidden on a
+      phone or tablet nothing pushed the actions over, so they sat against
+      the brand with the whole right half of the bar empty. */
+.nav-actions{margin-left:auto}
+
+/* 2. Gutters clear the notch in landscape, on every full-width container */
+.wrap{
+  padding-inline:
+    max(var(--gut), env(safe-area-inset-left))
+    max(var(--gut), env(safe-area-inset-right));
+}
+
+/* 3. The floating chat launcher sits above the home indicator, not under it */
+#sp-chat{
+  right:max(20px, env(safe-area-inset-right));
+  bottom:max(20px, env(safe-area-inset-bottom));
+}
+
+/* 4. 100vh on iOS is the *large* viewport, so a panel sized with it runs
+      under Safari's toolbar. dvh tracks the visible area; the vh line stays
+      first as the fallback for anything that does not support it. */
+#sp-panel{
+  height:min(560px, calc(100vh - 110px));
+  height:min(560px, calc(100dvh - 110px));
+  max-height:calc(100dvh - 88px);
+}
+
+/* 5. iOS Safari zooms the whole page in when a focused field is under 16px.
+      Touch pointers get 16px fields; desktop keeps the tighter scale. */
+@media (pointer:coarse){
+  .field-label input,
+  .field-label select,
+  .field-label textarea,
+  .field-label input[type=file],
+  #sp-input,
+  #sp-emailinput{font-size:16px}
+  /* keep the taller fields from growing the dialog more than they need */
+  .field-label input,.field-label select{padding:10px 13px}
+}
+
+/* 6. Comfortable touch targets on the header controls */
+@media (pointer:coarse){
+  .theme-toggle,.menu-toggle{min-width:44px;min-height:44px}
+}
 </style>
 </head>
 
